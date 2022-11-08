@@ -4,6 +4,7 @@ class AttendancesController < ApplicationController
   before_action :logged_in_user, only: [:update, :edit_one_month]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month
+  before_action :set_superior, only: [:edit_one_month, :update_one_month, :edit_overwork, :update_overwork, :update_month_request]
   
   UPDATE_ERROR_MSG = "勤怠登録に失敗しました。やり直してください。"
   
@@ -50,12 +51,39 @@ class AttendancesController < ApplicationController
     redirect_to attendances_edit_one_month_user_url(date: params[:date])
   end
   
+  
+  
+  def log_page
+    if Attendance.where(one_month_approval_status: "承認").order(:user_id, :worked_on).group_by(&:user_id)
+      if params["select_year(1i)"].nil?
+        @first_day = Date.current.beginning_of_month
+      else
+        @first_day = Date.parse("#{params["select_year(1i)"]}/#{params["select_month(2i)"]}/1")
+      end
+      #@attendances = @user.attendances.where(worked_on: {}, attendance_change_check_status: "承認済").order(:user_id, :worked_on).group_by(&:user_id)
+      #@first_day = Date.current.beginning_of_month
+      @last_day = @first_day.end_of_month   
+      #@attendances = @user.attendances.where(worked_on: @first_day..@last_day).where(attendance_change_check_status: "勤怠変更承認済").order(:worked_on)
+      @attendances = @user.attendances.where(worked_on: @first_day..@last_day, attendance_change_status: "承認").order(:worked_on)
+    end
+  end
+  
   private
-    # 一か月分の勤怠情報を扱います
-    def attendances_params
-      params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
+  
+    def set_attendance
+      @attendance = Attendance.find(params[:id])
+    end
+      
+    def set_superior
+      @superior = User.where(superior:true).where.not(id:current_user.id)
     end
     
-    # beforeフィルター
-   
+    # 一か月分の勤怠情報を扱います
+    def attendances_params
+      params.require(:user).permit(attendances: [:restarted_at,
+                                                 :refinished_at,
+                                                 :next_day, :note,
+                                                 :superior_attendance_change_confirmation,
+                                                 :attendance_change_status])[:attendances]
+    end
 end
