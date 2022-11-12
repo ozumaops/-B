@@ -1,7 +1,7 @@
 class AttendancesController < ApplicationController
   include AttendancesHelper
   before_action :set_user, only: [:edit_one_month, :update_one_month]
-  before_action :logged_in_user, only: [:update, :edit_one_month]
+  before_action :logged_in_user, only: [:update, :edit_one_month, :log_page]
   before_action :admin_or_correct_user, only: [:update, :edit_one_month, :update_one_month]
   before_action :set_one_month, only: :edit_one_month
   before_action :set_superior, only: [:edit_one_month, :update_one_month, :edit_overwork, :update_overwork, :update_month_request]
@@ -85,5 +85,9 @@ class AttendancesController < ApplicationController
                                                  :next_day, :note,
                                                  :superior_attendance_change_confirmation,
                                                  :attendance_change_status])[:attendances]
+    end
+    
+    def attendance_change_params
+      params.require(:user).permit(attendances: [:change_check, :attendance_change_status])[:attendances]
     end
 end
