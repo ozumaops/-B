@@ -1,0 +1,50 @@
+<% provide(:title, 'All Bases') %>
+<h1>拠点一覧</h1>
+
+<div class="row"> 
+  <div class="col-md-10 col-md-offset-1">
+    <table class="table table-bordered table-condensed" id="table-bases" %>
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th>拠点番号</th>
+          <th>拠点名</th>
+          <th>拠点種類</th>
+        </tr>
+      </thead>
+      <% @bases.each do |base| %>
+      <tbody>
+        <tr>
+          <td>
+            <%= link_to "修正", edit_basis_path(base), remote: true, class: "btn btn-primary" %>
+          </td>
+          <td>
+            <%= link_to "削除", base, method: :delete,
+              data: {confirm: "削除してもよろしいですか？" },
+              class: "btn btn-danger" %>
+          </td>
+          <td><%= base.base_number %></td>
+          <td><%= base.base_branch %></td>
+          <td><%= base.work_type %></td>
+        </tr>
+      </tbody>
+    <% end %>
+  </table>
+  <div class="content">
+    <tr>
+      <td colspan="5">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <%= link_to "拠点情報の追加", new_basis_path, remote: true, class: "btn btn-primary" %>
+          </div>
+        </div>
+      </td>
+    </tr>
+  </div>
+ </div>
+</div>
+
+<!--モーダルウインドウ表示-->
+<div id="edit-base" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
+<div id="new-base" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true"></div>
