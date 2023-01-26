@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :correct_user, only: [:edit, :update, :edit_basic_info, :update_basic_info, :edit_basic_info, :update_basic_info]
   before_action :admin_user, only: [:destroy, :index, :list_of_employees, :edit_basic_info, :update_basic_info] 
   before_action :set_one_month, only: :show
-  
+  before_action :not_allow_admin_user, only: :show
   
   def index
     @users = User.paginate(page: params[:page], per_page: 5).order("id ASC")

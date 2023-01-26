@@ -1,25 +1,26 @@
 Rails.application.routes.draw do
-  get 'posts/index'
-
+  
   root 'static_pages#top'
   get '/signup', to: 'users#new'
-  
+
   # ログイン機能
-  get '/login', to: 'sessions#new'
-  post '/login', to: 'sessions#create'
+  get    '/login', to: 'sessions#new'
+  post   '/login', to: 'sessions#create'
   delete '/logout', to: 'sessions#destroy'
-  
+
   resources :users do
-    collection {post :import}
+    collection {post :import}    
     member do
       get 'edit_basic_info'
       patch 'update_basic_info'
+      # １ヶ月分の変更申請      
       get 'attendances/edit_one_month'
       patch 'attendances/update_one_month'
+      # １ヶ月分の勤怠申請
       get 'attendances/edit_one_month_request'
       patch 'attendances/update_month_request'
       # 出勤社員 
-      get 'list_of_employees'
+      get 'list_of_employees'        
     end
     resources :attendances, only: [:update] do
       member do
@@ -37,9 +38,9 @@ Rails.application.routes.draw do
         patch 'update_one_month_approval'
         #  勤怠ログ
         get 'log_page'
-     end
-   end
- end
- 
+      end
+    end
+  end
+  
   resources :bases
 end
