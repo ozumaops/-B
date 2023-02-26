@@ -92,6 +92,8 @@ class AttendancesController < ApplicationController
         item[:change_check] = nil
         attendance.update(item)
         flash[:success] = "勤怠変更申請の承認結果を送信しました。"
+      else
+        flash[:danger] = "承認確認のチェックを入れてください。"
       end
     end
     redirect_to user_url(@user)
